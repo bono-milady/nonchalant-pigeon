@@ -1,6 +1,9 @@
 # zip files
 *.zip
 
+# working files
+nonp.jpg
+
 # build output
 dist/
 # generated types
