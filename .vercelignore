@@ -1,0 +1,7 @@
+*.zip
+src/assets/raw/
+.vscode/
+AGENTS.md
+CLAUDE.md
+README.md
+scripts/
