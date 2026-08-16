@@ -1,0 +1,316 @@
+---
+import type { PigeonRecord } from './types';
+
+interface Props {
+  pigeons: PigeonRecord[];
+}
+const { pigeons } = Astro.props;
+const hasPigeons = pigeons.length > 0;
+---
+
+<section id="gallery" class="gallery-section">
+
+  <div class="gallery-header">
+    <p class="gallery-quote">He has been photographed 50 times, in 50 different outfits, leaning against the same wall.<br/>He has never once put the gun down.</p>
+  </div>
+
+  <div class="gallery-strip-wrap">
+    <div class="gallery-strip" id="gallery-strip" role="list" aria-label="Galerie costume">
+      {hasPigeons ? (
+        pigeons.map((p, i) => (
+          <button
+            class="strip-card"
+            role="listitem"
+            aria-label={`Costum ${i + 1} din ${pigeons.length}`}
+            data-index={i}
+            data-src={p.sizes['1000w']}
+          >
+            <img
+              src={p.sizes['400w']}
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        ))
+      ) : (
+        Array.from({ length: 8 }, (_, i) => (
+          <div class="strip-card strip-card--placeholder" aria-hidden="true">
+            <span>{i + 1}</span>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+
+  <div class="gallery-indicator" aria-live="polite" aria-atomic="true">
+    <span id="gallery-current">01</span>
+    <span class="text-ink2"> / {hasPigeons ? String(pigeons.length).padStart(2, '0') : '—'}</span>
+  </div>
+
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Costum mărit" hidden>
+  <button class="lightbox-close" id="lb-close" aria-label="Închide">&times;</button>
+  <button class="lightbox-prev" id="lb-prev" aria-label="Anterior">&#8592;</button>
+  <button class="lightbox-next" id="lb-next" aria-label="Următor">&#8594;</button>
+  <div class="lightbox-img-wrap">
+    <img id="lb-img" src="" alt="" width="1000" height="1000" />
+  </div>
+  <div class="lightbox-label">
+    <span id="lb-num">01</span>
+    <span class="text-ink2"> / {hasPigeons ? String(pigeons.length).padStart(2, '0') : '—'}</span>
+  </div>
+</div>
+
+<style>
+  .gallery-section {
+    padding: 6vw 0 4vw;
+    background: var(--c-bg);
+  }
+
+  .gallery-header {
+    padding: 0 8vw 3vw;
+  }
+
+  .gallery-quote {
+    font-size: clamp(0.9rem, 1.35vw, 1.15rem);
+    color: var(--c-ink2);
+    line-height: 1.65;
+    font-style: italic;
+    max-width: 68ch;
+    margin: 0;
+  }
+
+  /* ── Strip ── */
+  .gallery-strip-wrap {
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+  }
+  .gallery-strip-wrap:active { cursor: grabbing; }
+
+  .gallery-strip {
+    display: flex;
+    gap: 6px;
+    padding: 0 8vw 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .gallery-strip::-webkit-scrollbar { display: none; }
+
+  .strip-card {
+    flex-shrink: 0;
+    width: clamp(260px, 30vw, 400px);
+    aspect-ratio: 1;
+    background: var(--c-bg2);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    scroll-snap-align: start;
+    overflow: hidden;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+    transition: outline-color 0.12s;
+  }
+  .strip-card:hover { outline-color: var(--c-accent); }
+
+  .strip-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+  }
+
+  .strip-card--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--c-ink2);
+  }
+
+  /* ── Indicator ── */
+  .gallery-indicator {
+    padding: 0.75rem 8vw 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Lightbox ── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(26, 25, 23, 0.96);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .lightbox[hidden] { display: none; }
+
+  .lightbox-img-wrap {
+    width: clamp(260px, 80vmin, 700px);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .lightbox-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--c-white);
+  }
+
+  .lightbox-close,
+  .lightbox-prev,
+  .lightbox-next {
+    position: absolute;
+    background: none;
+    border: none;
+    color: var(--c-white);
+    cursor: pointer;
+    font-size: 1.8rem;
+    line-height: 1;
+    padding: 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .lightbox-close:hover,
+  .lightbox-prev:hover,
+  .lightbox-next:hover { opacity: 1; }
+
+  .lightbox-close { top: 1.5rem; right: 1.5rem; font-size: 2.2rem; }
+  .lightbox-prev   { left: 1.5rem; top: 50%; transform: translateY(-50%); }
+  .lightbox-next   { right: 1.5rem; top: 50%; transform: translateY(-50%); }
+
+  @media (max-width: 680px) {
+    .strip-card { width: clamp(220px, 72vw, 340px); }
+    .lightbox-prev { left: 0.5rem; }
+    .lightbox-next { right: 0.5rem; }
+  }
+</style>
+
+<script>
+(function () {
+  const strip   = document.getElementById('gallery-strip') as HTMLElement | null;
+  const indicator = document.getElementById('gallery-current');
+  const lightbox  = document.getElementById('lightbox') as HTMLElement | null;
+  const lbImg     = document.getElementById('lb-img') as HTMLImageElement | null;
+  const lbNum     = document.getElementById('lb-num');
+  const lbClose   = document.getElementById('lb-close');
+  const lbPrev    = document.getElementById('lb-prev');
+  const lbNext    = document.getElementById('lb-next');
+  const cards     = strip ? Array.from(strip.querySelectorAll<HTMLButtonElement>('.strip-card[data-index]')) : [];
+
+  if (!strip || cards.length === 0) return;
+
+  let lbActive = 0;
+
+  // ── Indicator via IntersectionObserver ──
+  const io = new IntersectionObserver((entries) => {
+    let visible: { el: HTMLButtonElement; ratio: number } | null = null;
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        const candidate = { el: e.target as HTMLButtonElement, ratio: e.intersectionRatio };
+        if (!visible || candidate.ratio > visible.ratio) visible = candidate;
+      }
+    }
+    if (visible && indicator) {
+      const idx = parseInt(visible.el.dataset.index ?? '0', 10);
+      indicator.textContent = String(idx + 1).padStart(2, '0');
+    }
+  }, {
+    root: strip,
+    threshold: [0.5],
+  });
+
+  cards.forEach(c => io.observe(c));
+
+  // ── Pointer-drag scroll ──
+  let isDown = false;
+  let hasDragged = false;
+  let dragStartX = 0;
+  let scrollStart = 0;
+
+  strip.addEventListener('pointerdown', (e) => {
+    isDown = true;
+    hasDragged = false;
+    dragStartX = e.clientX;
+    scrollStart = strip.scrollLeft;
+    strip.setPointerCapture(e.pointerId);
+  });
+
+  strip.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    const dx = e.clientX - dragStartX;
+    if (Math.abs(dx) > 4) hasDragged = true;
+    strip.scrollLeft = scrollStart - dx;
+  });
+
+  strip.addEventListener('pointerup', () => { isDown = false; });
+  strip.addEventListener('pointercancel', () => { isDown = false; hasDragged = false; });;
+
+  // ── Lightbox ──
+  function openLightbox(idx: number) {
+    if (!lightbox || !lbImg || !lbNum) return;
+    lbActive = Math.max(0, Math.min(idx, cards.length - 1));
+    lbImg.src = cards[lbActive].dataset.src ?? '';
+    lbNum.textContent = String(lbActive + 1).padStart(2, '0');
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+    lbClose?.focus();
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function lbStep(dir: 1 | -1) {
+    openLightbox(lbActive + dir);
+  }
+
+  cards.forEach((card) => {
+    card.addEventListener('click', () => {
+      if (hasDragged) { hasDragged = false; return; }
+      const idx = parseInt(card.dataset.index ?? '0', 10);
+      openLightbox(idx);
+    });
+  });
+
+  lbClose?.addEventListener('click', closeLightbox);
+  lbPrev?.addEventListener('click', () => lbStep(-1));
+  lbNext?.addEventListener('click', () => lbStep(1));
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox || lightbox.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft')  lbStep(-1);
+    if (e.key === 'ArrowRight') lbStep(1);
+  });
+})();
+</script>

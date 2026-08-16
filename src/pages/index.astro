@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Marquee from '../components/Marquee.astro';
+import Hero from '../components/Hero.astro';
+import Gallery from '../components/Gallery.astro';
+import type { PigeonRecord } from '../components/types';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
+
+const manifestPath = join(process.cwd(), 'public/images/pigeon/manifest.json');
+let allRecords: PigeonRecord[] = [];
+if (existsSync(manifestPath)) {
+  try {
+    allRecords = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+  } catch {
+    allRecords = [];
+  }
+}
+
+const isSpecial = (name: string) =>
+  name.toLowerCase().includes('banner') || name.toLowerCase().includes('basecharacter');
+
+const pigeons = allRecords.filter(p => !isSpecial(p.originalName));
+
+// 12 hero images in specific order (safe originals only)
+const HERO_SLUGS = [
+  '030', // barber
+  '019', // degen
+  '018', // trader
+  '041', // roman
+  '039', // cowboy
+  '033', // boxer
+  '048', // ghost
+  '025', // chef
+  '029', // prisoner
+  '037', // sumo
+  '040', // viking
+  '050', // toddler
+];
+
+const slugMap = new Map(pigeons.map(p => [p.slug, p]));
+const heroImages: PigeonRecord[] = HERO_SLUGS
+  .map(s => slugMap.get(s))
+  .filter((p): p is PigeonRecord => !!p);
+---
+
+<Layout title="Nonchalant Pigeon" description="Same wall. Same lean. Fifty outfits deep and he still hasn't looked up.">
+
+  <Marquee text="NOTHING EVER HAPPENS  ·  NOTHING EVER HAPPENS  ·  " />
+
+  <Hero heroImages={heroImages} />
+
+  <div class="separator" aria-hidden="true"></div>
+
+  <Gallery pigeons={pigeons} />
+
+  <div class="empire-wrap" aria-hidden="true">
+    <img
+      class="empire-img"
+      src="/images/empire.jpg"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+</Layout>
+
+<style>
+  .empire-wrap {
+    width: 100%;
+    line-height: 0;
+  }
+  .empire-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+</style>

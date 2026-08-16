@@ -1,0 +1,281 @@
+---
+import type { PigeonRecord } from './types';
+
+interface Props {
+  heroImages: PigeonRecord[];
+}
+const { heroImages } = Astro.props;
+const hasPigeons = heroImages.length > 0;
+const TOTAL = 50;
+---
+
+<section class="hero" id="hero">
+
+  <!-- LEFT: pigeon fills entire column -->
+  <div class="hero-left">
+    {hasPigeons ? (
+      heroImages.map((p, i) => (
+        <img
+          class={`pigeon-layer${i === 0 ? ' active' : ''}`}
+          src={p.sizes['400w']}
+          alt=""
+          aria-hidden="true"
+          width="400"
+          height="400"
+          loading={i < 3 ? 'eager' : 'lazy'}
+          decoding={i < 3 ? 'sync' : 'async'}
+          data-index={i}
+        />
+      ))
+    ) : (
+      <div class="hero-empty">
+        <span>🐦</span>
+        <p>Run <code>npm run process-images</code></p>
+      </div>
+    )}
+  </div>
+
+  <!-- RIGHT: text, three zones -->
+  <div class="hero-right" aria-label="Nonchalant Pigeon">
+
+    <!-- Title block: h1 → tagline → CA → social links -->
+    <div class="hero-title-block">
+      <h1>NONCHALANT<br/>PIGEON</h1>
+      <p class="hero-tagline">it's literally a nonchalant pigeon</p>
+      <button
+        class="hero-ca-btn"
+        id="hero-ca-btn"
+        aria-label="Copy contract address"
+        title="Click to copy CA"
+        data-ca="9TnyQNgUHwf9AAHwnQnexTVFvctgfw1nXFtMa5Mqpump"
+      >
+        <span class="ca-display">9Tny...Ma5Mqpump</span>
+        <span class="ca-copied" aria-hidden="true">copied!</span>
+      </button>
+      <nav class="hero-links" aria-label="Links">
+        <a href="https://t.me/nonchalantpigeononsolg" class="hero-link" aria-label="Telegram" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+          </svg>
+          <span>telegram</span>
+        </a>
+        <a href="https://x.com/NonPigeonsol" class="hero-link" aria-label="X" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.257 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+          </svg>
+          <span>twitter</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Counter only at bottom -->
+    <div class="hero-counter" id="hero-counter" aria-live="polite" aria-atomic="true">
+      <span id="hero-num">01</span><span class="muted"> / {String(TOTAL).padStart(2, '0')}</span>
+    </div>
+
+  </div>
+
+</section>
+
+<style>
+  .hero {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 55% 45%;
+    overflow: hidden;
+  }
+
+  /* ── Left ── */
+  .hero-left {
+    position: relative;
+    background: var(--c-bg);
+    border-right: 1px solid var(--c-bg2);
+    overflow: hidden;
+  }
+
+  .hero-left .pigeon-layer {
+    object-fit: contain;
+    object-position: center bottom;
+    padding: 4% 6%;
+  }
+
+  .hero-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--c-ink2);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .hero-empty span { font-size: 5rem; }
+  .hero-empty code {
+    background: var(--c-bg2);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.8rem;
+  }
+
+  /* ── Right ── */
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5vw 6vw 5vw 5vw;
+    background: var(--c-bg);
+  }
+
+  /* Title */
+  .hero-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4.2vw, 4.8rem);
+    line-height: 0.92;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-tagline {
+    font-size: clamp(0.82rem, 1.15vw, 1.1rem);
+    font-weight: 400;
+    color: var(--c-ink2);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* CA copy button */
+  .hero-ca-btn {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    cursor: pointer;
+    position: relative;
+    margin-top: 0.2rem;
+  }
+
+  .ca-display {
+    font-family: ui-monospace, 'Courier New', monospace;
+    font-size: clamp(0.68rem, 0.82vw, 0.82rem);
+    color: var(--c-ink2);
+    letter-spacing: 0.03em;
+    transition: color 0.15s;
+  }
+
+  .hero-ca-btn:hover .ca-display { color: var(--c-ink); }
+
+  .ca-copied {
+    font-family: ui-monospace, 'Courier New', monospace;
+    font-size: clamp(0.65rem, 0.75vw, 0.75rem);
+    color: var(--c-ink2);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .hero-ca-btn.is-copied .ca-copied { opacity: 1; }
+  .hero-ca-btn.is-copied .ca-display { opacity: 0.35; }
+
+  /* Social links */
+  .hero-links {
+    margin-top: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 2rem);
+  }
+
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: clamp(0.78rem, 0.95vw, 0.95rem);
+    font-weight: 400;
+    color: var(--c-ink);
+    text-decoration: none;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .hero-link:hover { opacity: 0.45; }
+  .hero-link svg { flex-shrink: 0; }
+
+  .hero-counter {
+    font-size: clamp(0.75rem, 0.9vw, 0.9rem);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+  .muted { color: var(--c-ink2); }
+
+  /* ── Mobile ── */
+  @media (max-width: 680px) {
+    .hero {
+      grid-template-columns: 1fr;
+      grid-template-rows: 52vw auto;
+      height: auto;
+      min-height: 100vh;
+    }
+    .hero-left {
+      border-right: none;
+      border-bottom: 1px solid var(--c-bg2);
+    }
+    .hero-right {
+      padding: 7vw 8vw;
+      gap: 6vw;
+      justify-content: flex-start;
+    }
+    h1 { font-size: clamp(1.8rem, 10vw, 3rem); }
+    .hero-links-block { flex-wrap: wrap; }
+  }
+</style>
+
+<script>
+(function () {
+  // ── Costume auto-advance ──
+  const layers  = Array.from(document.querySelectorAll<HTMLImageElement>('#hero .pigeon-layer'));
+  const counter = document.getElementById('hero-num');
+  if (layers.length) {
+    let active = 0;
+    setInterval(() => {
+      layers[active].classList.remove('active');
+      active = (active + 1) % layers.length;
+      layers[active].classList.add('active');
+      if (counter) counter.textContent = String(active + 1).padStart(2, '0');
+      const next = (active + 1) % layers.length;
+      if (layers[next].loading === 'lazy') layers[next].loading = 'eager';
+    }, 2500);
+  }
+
+  // ── CA click-to-copy ──
+  const caBtn = document.getElementById('hero-ca-btn') as HTMLButtonElement | null;
+  if (caBtn) {
+    caBtn.addEventListener('click', async () => {
+      const ca = caBtn.dataset.ca ?? '';
+      try {
+        await navigator.clipboard.writeText(ca);
+        caBtn.classList.add('is-copied');
+        setTimeout(() => caBtn.classList.remove('is-copied'), 1800);
+      } catch {
+        // fallback for browsers without clipboard API
+        const ta = document.createElement('textarea');
+        ta.value = ca;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        caBtn.classList.add('is-copied');
+        setTimeout(() => caBtn.classList.remove('is-copied'), 1800);
+      }
+    });
+  }
+})();
+</script>

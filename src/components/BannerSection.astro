@@ -1,0 +1,205 @@
+---
+interface Props {
+  bannerSrc?: string;
+  bannerAlt?: string;
+}
+const {
+  bannerSrc = '',
+  bannerAlt = 'Nonchalant Pigeon — banner',
+} = Astro.props;
+
+const hasBanner = !!bannerSrc;
+---
+
+<section class="banner-section">
+
+  <div class="separator" aria-hidden="true"></div>
+
+  <!-- Banner full-bleed, max 60vh -->
+  <div class="banner-wrap">
+    {hasBanner ? (
+      <img
+        class="banner-img"
+        src={bannerSrc}
+        alt={bannerAlt}
+        width="1500"
+        height="500"
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <div class="banner-placeholder">
+        <p>BANNER<br/><small>1500 × 500px</small></p>
+      </div>
+    )}
+
+    <!-- Frosted card bottom-left -->
+    <div class="banner-card frosted">
+      <h2>THE LINEUP</h2>
+    </div>
+  </div>
+
+  <!-- Main card -->
+  <div class="cards-row">
+
+    <div class="main-card frosted">
+      <div class="main-card__inner">
+        <h3>All dressed up</h3>
+        <p class="text-ink2">Every one of them showed up dressed for something. None of them showed up for anything.</p>
+      </div>
+    </div>
+
+    <div class="final-card frosted">
+      <div class="final-card__inner">
+        <h3>He's not doing anything</h3>
+        <p class="text-ink2">No roadmap. No utility. No plans to move. He's been against that wall since before you got here and he'll be there after you leave.</p>
+        <div class="card-actions">
+          <a href="#" class="btn-pill">BUY</a>
+          <a href="#" class="btn-pill btn-pill--outline">CHART</a>
+          <a href="#" class="btn-pill btn-pill--outline btn-icon" aria-label="X (Twitter)">
+            <!-- X / Twitter logo -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.257 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+            </svg>
+          </a>
+          <a href="#" class="btn-pill btn-pill--outline btn-icon" aria-label="Telegram">
+            <!-- Telegram logo -->
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="separator" aria-hidden="true"></div>
+
+</section>
+
+<style>
+  .banner-section {
+    background: var(--c-bg);
+  }
+
+  /* ── Banner ── */
+  .banner-wrap {
+    position: relative;
+    width: 100%;
+    max-height: 60vh;
+    overflow: hidden;
+    background: var(--c-bg2);
+    aspect-ratio: 3 / 1;
+  }
+
+  .banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .banner-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-ink2);
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--c-bg2) 0,
+      var(--c-bg2) 10px,
+      var(--c-bg) 10px,
+      var(--c-bg) 20px
+    );
+  }
+
+  /* Frosted card bottom-left over banner */
+  .banner-card {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 4vw;
+    padding: 0.9rem 1.4rem;
+    max-width: clamp(180px, 28vw, 340px);
+  }
+
+  .banner-card h2 {
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    margin: 0;
+  }
+
+  /* ── Cards row ── */
+  .cards-row {
+    padding: 4vw 8vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1rem, 2vw, 2.5rem);
+    align-items: start;
+  }
+
+  .main-card,
+  .final-card {
+    padding: clamp(1.5rem, 2.5vw, 2.5rem);
+  }
+
+  .main-card__inner,
+  .final-card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  /* ── Buttons ── */
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1.2em;
+    border-radius: 100vw;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    background: var(--c-ink);
+    color: var(--c-white);
+    transition: opacity 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-pill:hover { opacity: 0.75; }
+
+  .btn-icon {
+    padding: 0.5em 0.85em;
+    gap: 0;
+  }
+
+  .btn-pill--outline {
+    background: transparent;
+    color: var(--c-ink);
+    border: 1.5px solid var(--c-ink);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .cards-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .banner-wrap { aspect-ratio: 2 / 1; }
+    .banner-card { bottom: 0.75rem; max-width: 70vw; padding: 0.6rem 1rem; }
+    .banner-card h2 { font-size: 1rem; }
+  }
+</style>

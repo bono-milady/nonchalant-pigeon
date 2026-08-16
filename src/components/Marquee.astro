@@ -1,0 +1,48 @@
+---
+interface Props {
+  text?: string;
+  speed?: string; /* override CSS var --marquee-speed */
+}
+const { text = 'NONCHALANT PIGEON  ·  NONCHALANT PIGEON  ·  NONCHALANT PIGEON  ·  ', speed } = Astro.props;
+// Dublam textul pentru loop seamless
+const doubled = text + text;
+---
+
+<!-- Covers negre la margini ca pe monkeyhaircut -->
+<div class="marquee-cover marquee-cover--left" aria-hidden="true"></div>
+<div class="marquee-cover marquee-cover--right" aria-hidden="true"></div>
+
+<div
+  class="marquee-bar"
+  role="marquee"
+  aria-label="Ticker text"
+  style={speed ? `--marquee-speed: ${speed}` : undefined}
+>
+  <div class="marquee-track" aria-hidden="true">
+    <span class="marquee-text">{doubled}</span>
+  </div>
+</div>
+
+<style>
+  .marquee-bar {
+    position: relative;
+    width: 100%;
+    height: var(--marquee-h);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    opacity: 0.45;
+    border-bottom: 1px solid var(--c-bg2);
+  }
+
+  .marquee-text {
+    white-space: nowrap;
+  }
+
+  .marquee-cover { display: none; }
+</style>
